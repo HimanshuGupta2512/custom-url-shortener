@@ -4,8 +4,14 @@ const { generateBase62Alias } = require('../utils/base62');
 const shortenUrl = async (req, res) => {
   const { originalUrl, customAlias } = req.body;
 
-  if (!originalUrl) {
-    return res.status(400).json({ error: 'originalUrl is required' });
+  // Ensure originalUrl is somewhat valid
+  if (!originalUrl || !originalUrl.startsWith('http')) {
+      return res.status(400).json({ error: "Invalid URL format. Must start with http or https." });
+  }
+
+  // Ensure customAlias only contains letters and numbers
+  if (customAlias && !/^[a-zA-Z0-9]+$/.test(customAlias)) {
+      return res.status(400).json({ error: "Custom alias must be strictly alphanumeric." });
   }
 
   try {
